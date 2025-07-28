@@ -1,13 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from PIL import Image
 
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    avatar = models.ImageField(upload_to='avatars/', default='avatars/default.jpg')
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     bio = models.TextField(max_length=500, blank=True)
     phone = models.CharField(max_length=20, blank=True)
     birth_date = models.DateField(null=True, blank=True)
@@ -28,26 +25,7 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.username}'s Profile"
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.avatar:
-            img = Image.open(self.avatar.path)
-            if img.height > 300 or img.width > 300:
-                output_size = (300, 300)
-                img.thumbnail(output_size)
-                img.save(self.avatar.path)
-
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
-
+   
 
 class Address(models.Model):
     ADDRESS_TYPE_CHOICES = [
@@ -77,8 +55,4 @@ class Address(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.address_type} - {self.city}"
 
-    def save(self, *args, **kwargs):
-        if self.is_default:
-            # Make all other addresses non-default for this user
-            Address.objects.filter(user=self.user, is_default=True).update(is_default=False)
-        super().save(*args, **kwargs)
+    
