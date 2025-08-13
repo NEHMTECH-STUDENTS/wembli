@@ -1,23 +1,33 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles.css' %} ">
     <title>Document</title>
 </head>
 <body>
-
-    <h3> Categories </h3>
+{% comment %} Featured products {% endcomment %}
+    <h3> Featured products </h3>
    
-    {% for category in categories %}
+    {% if featured_products %}
+    <div class="container">
+            {% for product in featured_products %}
+                <div class="product-card">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
 
-    <p>
-    {{ category.name }}
-    </p>
-
-    {% endfor %}
-
-
+                        <div class="product-card-details">
+                            <p>{{ product.name }}</p>
+                            <p>{{ product.featured }}</p>
+                            <p>{{ product.stock }}</p>
+                            <p>{{ product.price }}</p>
+                        </div>
+                </div>    
+            {% endfor %}
+    </div>
+    {% endif %}
 
 </body>
 </html>

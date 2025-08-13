@@ -13,6 +13,7 @@ class Category(models.Model):
     is_active = models.BooleanField(default=True)
     create_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
 
     class Meta:
         verbose_name_plural = 'Categories'
@@ -24,7 +25,6 @@ class Category(models.Model):
 
     def get_absolute_url(self):
         return reverse('shop:category_detail', args=[self.slug])
-
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
@@ -102,6 +102,7 @@ class CartItem(models.Model):
 
     def get_total_price(self):
         return self.quantity * self.product.price
+
 
 
 class Order(models.Model):
